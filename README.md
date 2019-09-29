@@ -14,7 +14,7 @@ range = 0xFFFFFFFF (for 32-bit) and cause a modulo under every possible random v
 
 One way to get around this is to make the fraction longer than the range, for instance a 64-bit fraction for a 32-bit range argument.
 We use the same rule for discarding values, but in a 64-bit range of fractions, and our initial condition for discarding 
-is against a 32-bit value.  
+is against a 32-bit value, so odds are that we won't discard often.
 
 This is called 32.64 fixed point, and we use a trick which may speed things up:  given such a wide range of fractions, and a 
 small range to check against, we can calculate the most significant bits of the fraction first and only calculate the least significant
@@ -23,7 +23,10 @@ when discarding has not been ruled out, or when the lsb's may carry into the int
 ## To Infinity and Beyond 
 
 After figuring all this out, I realized that another way to avoid bias is to carry out the calculation to "infinite" precision.
-The same method for left-to-right multiplication allows us to get the integer portion of the result without evaluating an infinite number of bits.
+
+The same method for "pruned" left-to-right multiplication allows us to get the integer portion of the result without evaluating an infinite number of bits, on average.  
+
+We never discard a value, but we continue rightwards only under exponentially rarefying conditions; the only concern is whether adding a few bits to the right can carry left all the way to the integer result, ie we have .1111...1xxx as the fraction.
 
 ## Other notes
 
